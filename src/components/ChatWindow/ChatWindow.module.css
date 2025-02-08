@@ -1,0 +1,199 @@
+/* Chat Window */
+.chatWindow {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 16px;
+  background: linear-gradient(160deg, #0f0f1a 0%, #1a1a2e 100%);
+  overflow: hidden;
+}
+
+.assistantTitle {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  background-color: #1e1e1e;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1.5rem;
+}
+
+.promptStarters {
+  margin-bottom: 20px;
+}
+
+.promptGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.promptCard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.promptCard:hover {
+  transform: translateY(-4px);
+  background-color: #2e2e2e;
+}
+
+.promptIcon {
+  color: #9c27b0;
+  font-size: 24px;
+}
+
+.promptContent h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.promptContent p {
+  font-size: 0.875rem;
+  color: #b3b3b3;
+}
+
+.messagesContainer {
+  padding: 16px 24px;
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #666 #121212;
+}
+
+.messagesContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background-color: #666;
+  border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  background: rgba(32, 33, 35, 0.8);
+  border: 1px solid rgba(32, 33, 35, 0.8);
+  border: 1px solid #666;
+  border-radius: 50px;
+  padding: 4px 10px;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  min-height: 40px;
+  transition: min-height 0.2s ease;
+}
+
+.css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input{
+  font-family: "Poppins", sans-serif !important;
+}
+
+.textField:focus,
+.textField:not(:placeholder-shown) {
+  min-height: 50px;
+}
+
+.textField {
+  flex-grow: 1;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 50px;
+}
+
+.sendButton {
+  background-color: #fff;
+  background: #6c5ce7 !important; /* New purple shade */
+  color: #000;
+  border-radius: 50%;
+  padding: 8px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: background-color 0.3s ease;
+}
+
+.sendButton svg {
+  color: #fff !important; /* White arrow */
+}
+
+.sendButton:hover {
+  background: #5b4bc4 !important;
+}
+
+.promptStarters {
+  margin-top: 16px;
+}
+
+
+.typingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #888;
+  font-size: 0.9rem;
+  padding: 16px 24px;
+}
+
+.dotFlashing {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #6c5ce7;
+  animation: dotFlashing 1.2s infinite ease-in-out;
+}
+
+.dotFlashing::before,
+.dotFlashing::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #6c5ce7;
+  left: 12px;
+}
+
+.dotFlashing::after {
+  left: 24px;
+  animation-delay: 0.4s;
+}
+
+@keyframes dotFlashing {
+  0%, 100% { opacity: 0.1; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+
+
+.promptCard {
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.promptCard.processing {
+  pointer-events: none;
+  opacity: 0.7;
+}
