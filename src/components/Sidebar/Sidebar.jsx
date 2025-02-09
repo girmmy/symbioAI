@@ -4,6 +4,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add'; 
 import PropTypes from 'prop-types';
 import styles from './Sidebar.module.css';
+import logo from '.././../assets/symbioai-logo.png';
+
 
 const assistants = [
   { id: 'asst_j2lg6re3njFZSCsMIQkI8mO4', name: 'Carbon Assistant', color: '#9c27b0' },
@@ -20,7 +22,7 @@ function Sidebar({ selectedAssistant, setSelectedAssistant, isSidebarOpen, toggl
         <IconButton onClick={toggleSidebar} className={styles.menuButton} sx={{ fontSize: '1.5rem' }}>
           <MenuIcon fontSize="inherit" /> 
         </IconButton>
-        <img src="/logo.png" alt="SymbioAI Logo" className={styles.logo} />
+        <a href="./" alt="SymbioAI Logo"><img src={logo} alt="SymbioAI Logo" className={styles.logo} /></a>
       </Box>
 
       {/* New Chat Button */}

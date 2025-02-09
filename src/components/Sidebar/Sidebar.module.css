@@ -85,3 +85,11 @@
 .MuiTypography-root {
   font-family: 'Poppins, sans-serif' !important;
 }
+
+img {
+  width: 100%;
+  max-width: 120px;
+  padding-left: 10px;
+  border-radius: 8px;
+  object-fit: cover;
+}
