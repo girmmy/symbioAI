@@ -86,7 +86,6 @@ function ChatWindow({ messages, isLoading, handleSubmit, selectedAssistant, setS
     setIsProcessing(false);
   };
 
-
   return (
     <Box className={styles.chatWindow}>
       {/* Assistant Title */}
@@ -127,11 +126,9 @@ function ChatWindow({ messages, isLoading, handleSubmit, selectedAssistant, setS
         {isLoading && (
           <div className={styles.typingIndicator}>
             <div className={styles.dotFlashing}></div>
-            <span className='margin-left: 30px'>SymbioAI is typing</span>
-            
+            <span>SymbioAI is typing</span>
           </div>
         )}
-        
       </Box>
 
       {/* Input Field and Send Button */}
@@ -145,7 +142,17 @@ function ChatWindow({ messages, isLoading, handleSubmit, selectedAssistant, setS
           onChange={(e) => setUserInput(e.target.value)}
           onKeyPress={handleKeyPress}
           className={styles.textField}
-          InputProps={{ style: { color: '#fff', borderRadius: '16px' } }}
+          InputProps={{
+            style: { color: '#fff', borderRadius: '16px' },
+            sx: {
+              '& .MuiOutlinedInput-notchedOutline': {
+                border: 'none', // Remove the default border
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                border: 'none', // Remove the border on focus
+              },
+            },
+          }}
         />
         <IconButton
           onClick={() => handleSend()}

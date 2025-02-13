@@ -1,6 +1,5 @@
 // Sidebar.jsx
 import { List, ListItem, ListItemButton, ListItemText, IconButton, Box } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add'; 
 import PropTypes from 'prop-types';
 import styles from './Sidebar.module.css';
@@ -19,9 +18,7 @@ function Sidebar({ selectedAssistant, setSelectedAssistant, isSidebarOpen, toggl
     <div className={`${styles.sidebar} ${isSidebarOpen ? styles.open : styles.closed}`}>
       {/* Sidebar Header with Toggle Button */}
       <Box className={styles.sidebarHeader}>
-        <IconButton onClick={toggleSidebar} className={styles.menuButton} sx={{ fontSize: '1.5rem' }}>
-          <MenuIcon fontSize="inherit" /> 
-        </IconButton>
+        <IconButton onClick={toggleSidebar} className={styles.menuButton} sx={{ fontSize: '1.5rem', marginRight: '1.5rem' }}></IconButton>
         <a href="./" alt="SymbioAI Logo"><img src={logo} alt="SymbioAI Logo" className={styles.logo} /></a>
       </Box>
 

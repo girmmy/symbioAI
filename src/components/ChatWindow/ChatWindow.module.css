@@ -100,15 +100,6 @@
   transition: min-height 0.2s ease;
 }
 
-.css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input{
-  font-family: "Poppins", sans-serif !important;
-}
-
-.textField:focus,
-.textField:not(:placeholder-shown) {
-  min-height: 50px;
-}
-
 .textField {
   flex-grow: 1;
   background-color: transparent;
@@ -118,6 +109,20 @@
   font-size: 1rem;
   padding: 8px;
   border-radius: 50px;
+}
+
+.textField:focus,
+.textField:not(:placeholder-shown) {
+  min-height: 50px;
+}
+
+.css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input{
+  font-family: "Poppins", sans-serif !important;
+}
+
+.textField:focus,
+.textField:not(:placeholder-shown) {
+  min-height: 50px;
 }
 
 .sendButton {
@@ -151,7 +156,7 @@
 .typingIndicator {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 32px;
   color: #888;
   font-size: 0.9rem;
   padding: 16px 24px;
