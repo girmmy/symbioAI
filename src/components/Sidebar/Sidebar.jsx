@@ -5,15 +5,25 @@ import PropTypes from 'prop-types';
 import styles from './Sidebar.module.css';
 import logo from '.././../assets/symbioai-logo.png';
 
+// const API_KEY = import.meta.env.VITE_API_KEY;
+const carbon_asst = import.meta.env.VITE_CARBON;
+const recycling_asst = import.meta.env.VITE_RECYCLING;
+const electricity_asst = import.meta.env.VITE_ELECTRICITY;
+const water_asst = import.meta.env.VITE_WATER;
 
 const assistants = [
-  { id: 'asst_j2lg6re3njFZSCsMIQkI8mO4', name: 'Carbon Assistant', color: '#9c27b0' },
-  { id: 'asst_eLkixunEVtdNYTSCDte4WrNh', name: 'Recycling Assistant', color: '#673ab7' },
-  { id: 'asst_ki6R6jlbnBapIRD5YXIdn5DU', name: 'Electricity Assistant', color: '#3f51b5' },
-  { id: 'asst_qcgWbKQKWybb0wmetTq8uuat', name: 'Water Conservation Assistant', color: '#2196f3' },
+  { id: carbon_asst, name: 'Carbon Assistant', color: '#9c27b0' },
+  { id: recycling_asst, name: 'Recycling Assistant', color: '#673ab7' },
+  { id: electricity_asst, name: 'Electricity Assistant', color: '#3f51b5' },
+  { id: water_asst, name: 'Water Conservation Assistant', color: '#2196f3' },
 ];
 
 function Sidebar({ selectedAssistant, setSelectedAssistant, isSidebarOpen, toggleSidebar, onNewChat }) {
+  const handleNewChat = (assistantId) => {
+    onNewChat(); // Call the onNewChat function to clear the chat
+    setSelectedAssistant(assistantId); // Switch assistant
+  };
+
   return (
     <div className={`${styles.sidebar} ${isSidebarOpen ? styles.open : styles.closed}`}>
       {/* Sidebar Header with Toggle Button */}
@@ -34,7 +44,7 @@ function Sidebar({ selectedAssistant, setSelectedAssistant, isSidebarOpen, toggl
           <ListItem key={assistant.id} disablePadding>
             <ListItemButton
               selected={selectedAssistant === assistant.id}
-              onClick={() => setSelectedAssistant(assistant.id)}
+              onClick={() => handleNewChat(assistant.id)}
               className={`${styles.assistantButton} ${
                 selectedAssistant === assistant.id ? styles.selected : ''
               }`}

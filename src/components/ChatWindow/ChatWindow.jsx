@@ -14,6 +14,13 @@ function ChatWindow({ messages, isLoading, handleSubmit, selectedAssistant, setS
   const [userInput, setUserInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // const API_KEY = import.meta.env.VITE_API_KEY;
+  // const carbon_asst = import.meta.env.VITE_CARBON;
+  const recycling_asst = import.meta.env.VITE_RECYCLING;
+  const electricity_asst = import.meta.env.VITE_ELECTRICITY;
+  const water_asst = import.meta.env.VITE_WATER;
+
+
   const handleSend = (message = '') => {
     const input = message || userInput;
     if (input.trim()) {
@@ -64,13 +71,13 @@ function ChatWindow({ messages, isLoading, handleSubmit, selectedAssistant, setS
     let newAssistantId = '';
     switch(prompt.title) {
       case 'Recycling Tips':
-        newAssistantId = 'asst_eLkixunEVtdNYTSCDte4WrNh';
+        newAssistantId = recycling_asst;
         break;
-      case 'Sustainability':
-        newAssistantId = 'asst_ki6R6jlbnBapIRD5YXIdn5DU';
+      case 'Electricity':
+        newAssistantId = electricity_asst;
         break;
       case 'Water Conservation':
-        newAssistantId = 'asst_qcgWbKQKWybb0wmetTq8uuat';
+        newAssistantId = water_asst;
         break;
       default:
         newAssistantId = selectedAssistant;
@@ -185,7 +192,7 @@ ChatWindow.propTypes = {
   ).isRequired,
   isLoading: PropTypes.bool.isRequired,
   setSelectedAssistant: PropTypes.func.isRequired,
-  selectedAssistant: PropTypes.func.isRequired,
+  selectedAssistant: PropTypes.string.isRequired, // Fix: Change from func to string
   handleSubmit: PropTypes.func.isRequired,
   assistantName: PropTypes.string.isRequired,
 };
