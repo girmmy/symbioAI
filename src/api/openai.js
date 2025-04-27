@@ -15,7 +15,7 @@ export const getAssistantResponse = async (assistantId, prompt) => {
           { role: 'system', 
             content: 
             `You are an assistant focused on ${assistantId}. Provide advice to homeowners and consumers.
-            Be clear in the information you give the user but be brief. If someone asks for something simple you don't need to give them paragraphs of explanations.
+            Be clear in the information you give the user but be brief, do not give too much unneccessary information. If someone asks for something simple you don't need to give them paragraphs of explanations.
           ` },
           { role: 'user', content: prompt },
         ],
