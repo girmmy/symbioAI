@@ -1,11 +1,17 @@
-import { useState } from "react";
+// App.jsx
+import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./components/Sidebar/Sidebar";
 import ChatWindow from "./components/ChatWindow/ChatWindow";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  createThread,
+  sendMessage,
+  runAssistant,
+  cancelRun,
+} from "./api/openai.js";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
 const carbon_asst = import.meta.env.VITE_CARBON;
 const recycling_asst = import.meta.env.VITE_RECYCLING;
 const electricity_asst = import.meta.env.VITE_ELECTRICITY;
@@ -19,15 +25,11 @@ const assistants = [
 ];
 
 const theme = createTheme({
-  typography: {
-    fontFamily: "Poppins, sans-serif",
-  },
+  typography: { fontFamily: "Poppins, sans-serif" },
   components: {
     MuiListItemText: {
       styleOverrides: {
-        primary: {
-          fontFamily: "Poppins, sans-serif",
-        },
+        primary: { fontFamily: "Poppins, sans-serif" },
       },
     },
   },
@@ -35,71 +37,91 @@ const theme = createTheme({
 
 function App() {
   const [selectedAssistant, setSelectedAssistant] = useState(carbon_asst);
+  const [threadMap, setThreadMap] = useState({});
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentRunId, setCurrentRunId] = useState(null);
 
-  const handleSubmit = async (userInput, assistantId = selectedAssistant) => {
+  useEffect(() => {
+    // Create a thread for each assistant when the app starts
+    const initThreads = async () => {
+      const map = {};
+      for (const assistant of assistants) {
+        map[assistant.id] = await createThread();
+      }
+      setThreadMap(map);
+    };
+    initThreads();
+  }, []);
+
+  const handleSubmit = async (userInput) => {
     setIsLoading(true);
+    const threadId = threadMap[selectedAssistant];
+    const runMeta = { cancelled: false };
+    window.currentRunMeta = runMeta;
+
     setMessages((prev) => [...prev, { role: "user", content: userInput }]);
 
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini", // Use a valid model
-            messages: [
-              {
-                role: "system",
-                content: `You are an assistant focused on ${assistantId}. Provide advice to homeowners and consumers. Be clear in the information you give the user but be brief. If someone asks for something simple you don't need to give them paragraphs of explanations.`,
-              },
-              { role: "user", content: userInput },
-            ],
-          }),
-        }
-      );
+      await sendMessage(threadId, userInput);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a 1-second delay
+      const { runId, result } = await runAssistant(threadId, selectedAssistant);
+      setCurrentRunId(runId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      const finalMessage = await result;
 
-      const data = await response.json();
+      // Don't add stale response
+      if (runMeta.cancelled) return;
+
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.choices[0].message.content },
+        { role: "assistant", content: finalMessage },
       ]);
     } catch (error) {
-      console.error("Error fetching OpenAI response:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, I could not process your request.",
-        },
-      ]);
+      if (!runMeta.cancelled) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Sorry, I couldn't process your request.",
+          },
+        ]);
+      }
+      console.error("Error running assistant:", error);
     } finally {
-      setIsLoading(false);
+      // ✅ Ensure loading stops
+      if (!runMeta.cancelled) {
+        setIsLoading(false);
+      }
+      setCurrentRunId(null);
     }
   };
 
+  const handleSwitchAssistant = async (newAssistantId) => {
+    // Cancel active run if any
+    if (currentRunId && threadMap[selectedAssistant]) {
+      const threadId = threadMap[selectedAssistant];
+      await cancelRun(threadId, currentRunId);
+      if (window.currentRunMeta) window.currentRunMeta.cancelled = true;
+    }
+
+    // Reset UI state
+    setSelectedAssistant(newAssistantId);
+    setMessages([]);
+    setIsLoading(false); // ✅ hide typing indicator
+    setCurrentRunId(null);
+  };
+
   const handleNewChat = () => {
-    setMessages([]); // Clear chat messages
-    setSelectedAssistant(carbon_asst); // Reset to default assistant
+    setMessages([]);
+    setSelectedAssistant(carbon_asst);
   };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Get the current assistant's name
   const currentAssistant = assistants.find(
     (assistant) => assistant.id === selectedAssistant
   );
@@ -112,21 +134,17 @@ function App() {
           bgcolor: "#121212",
           minHeight: "100vh",
           color: "#fff",
-          fontFamily: "Poppins, sans-serif",
         }}
       >
-        {/* Sidebar */}
         <Sidebar
           selectedAssistant={selectedAssistant}
-          setSelectedAssistant={setSelectedAssistant}
+          setSelectedAssistant={handleSwitchAssistant}
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
           onNewChat={handleNewChat}
         />
 
-        {/* Main Content */}
         <Box sx={{ flexGrow: 1 }}>
-          {/* Toggle Sidebar Button */}
           <IconButton
             onClick={toggleSidebar}
             sx={{
@@ -140,7 +158,6 @@ function App() {
             <MenuIcon />
           </IconButton>
 
-          {/* Chat Window */}
           <ChatWindow
             messages={messages}
             isLoading={isLoading}
@@ -148,6 +165,7 @@ function App() {
             assistantName={currentAssistant.name}
             selectedAssistant={selectedAssistant}
             setSelectedAssistant={setSelectedAssistant}
+            handleSwitchAssistant={handleSwitchAssistant}
           />
         </Box>
       </Box>

@@ -1,17 +1,19 @@
 // Message.jsx
-import { Box, Typography, Paper } from '@mui/material';
-import PropTypes from 'prop-types';
-import styles from './Message.module.css'; 
+import { Box, Typography, Paper } from "@mui/material";
+import PropTypes from "prop-types";
+import styles from "./Message.module.css";
 
-function Message({ role, content }) {
-  const isUser = role === 'user';
+export default function Message({ role, content }) {
+  if (!content) return null; // Prevents a crash if content is missing
+
+  const isUser = role === "user";
   const align = isUser ? styles.userMessage : styles.assistantMessage;
-  const bgcolor = isUser ? '#9c27b0' : '#673ab7';
+  const bgcolor = isUser ? "#9c27b0" : "#673ab7";
 
   // Format content with paragraphs and bold text
-  const formattedContent = content.split('\n').map((paragraph, pIndex) => (
+  const formattedContent = content.split("\n").map((paragraph, pIndex) => (
     <div key={pIndex} className={styles.paragraph}>
-      {paragraph.split('**').map((part, index) =>
+      {paragraph.split("**").map((part, index) =>
         index % 2 === 1 ? (
           <strong key={index} className={styles.boldText}>
             {part}
@@ -25,11 +27,19 @@ function Message({ role, content }) {
 
   return (
     <Box className={`${styles.messageContainer} ${align}`}>
-      <Paper sx={{ p: 2, bgcolor, color: '#fff', maxWidth: '70%', borderRadius: '16px' }}>
-        <Typography variant="body1" sx={{ 
-          fontFamily: 'Poppins, sans-serif',
-          whiteSpace: 'pre-wrap' 
-        }}>
+      <Paper
+        sx={{
+          p: 2,
+          bgcolor,
+          color: "#fff",
+          maxWidth: { xs: "90%", sm: "70%" },
+          borderRadius: "16px",
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{ fontFamily: "Poppins, sans-serif", whiteSpace: "pre-wrap" }}
+        >
           {formattedContent}
         </Typography>
       </Paper>
@@ -37,10 +47,7 @@ function Message({ role, content }) {
   );
 }
 
-// Prop validation
 Message.propTypes = {
   role: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  content: PropTypes.string, // not required anymore
 };
-
-export default Message;
