@@ -6,6 +6,25 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true, // Needed for client-side usage
 });
 
+export async function streamAssistantResponse(
+  threadId,
+  assistantId,
+  onMessage
+) {
+  const run = await openai.beta.threads.runs.create(threadId, {
+    assistant_id: assistantId,
+    stream: true, // Enable streaming
+  });
+
+  // Process the stream
+  for await (const event of run) {
+    if (event.event === "thread.message.delta") {
+      const content = event.data.delta.content?.[0]?.text?.value || "";
+      onMessage(content);
+    }
+  }
+}
+
 // Create a new thread for an assistant conversation
 export async function createThread() {
   try {
@@ -31,39 +50,43 @@ export async function sendMessage(threadId, userMessage) {
   }
 }
 
-// Run the assistant on a thread and return the response
 export async function runAssistant(threadId, assistantId) {
   try {
     const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId,
     });
 
-    // Optional: expose run ID globally to cancel if needed
-    window.currentRunId = run.id;
+    // Return both run ID and the promise for the result
+    return {
+      runId: run.id,
+      result: (async () => {
+        // Poll for completion
+        let runStatus;
+        while (true) {
+          runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
 
-    // Poll for completion
-    let runStatus;
-    while (true) {
-      runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+          if (runStatus.status === "completed") {
+            break;
+          }
 
-      if (runStatus.status === "completed") {
-        break;
-      }
+          if (["failed", "cancelled", "expired"].includes(runStatus.status)) {
+            throw new Error(`Run was ${runStatus.status}`);
+          }
 
-      if (["failed", "cancelled", "expired"].includes(runStatus.status)) {
-        throw new Error(`Run was ${runStatus.status}`);
-      }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // wait 1 sec
-    }
+        // Get the latest assistant message
+        const messages = await openai.beta.threads.messages.list(threadId);
+        const lastMessage = messages.data.find(
+          (msg) => msg.role === "assistant"
+        );
 
-    // Get the latest assistant message
-    const messages = await openai.beta.threads.messages.list(threadId);
-    const lastMessage = messages.data.find((msg) => msg.role === "assistant");
-
-    return (
-      lastMessage?.content[0]?.text?.value || "No response from assistant."
-    );
+        return (
+          lastMessage?.content[0]?.text?.value || "No response from assistant."
+        );
+      })(),
+    };
   } catch (error) {
     console.error("Error running assistant:", error);
     throw error;

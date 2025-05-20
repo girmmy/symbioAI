@@ -1,5 +1,5 @@
 // Message.jsx
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import PropTypes from "prop-types";
 import styles from "./Message.module.css";
 
@@ -36,12 +36,9 @@ export default function Message({ role, content }) {
           borderRadius: "16px",
         }}
       >
-        <Typography
-          variant="body1"
-          sx={{ fontFamily: "Poppins, sans-serif", whiteSpace: "pre-wrap" }}
-        >
+        <Box sx={{ fontFamily: "Poppins, sans-serif", whiteSpace: "pre-wrap" }}>
           {formattedContent}
-        </Typography>
+        </Box>
       </Paper>
     </Box>
   );

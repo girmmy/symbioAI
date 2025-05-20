@@ -42,7 +42,7 @@
   border-radius: 12px;
   padding: 10px 16px;
   margin: 16px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -78,12 +78,12 @@
 }
 
 .assistantText {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
 }
 
 .MuiTypography-root {
-  font-family: 'Poppins, sans-serif' !important;
+  font-family: "Poppins, sans-serif" !important;
 }
 
 img {
@@ -92,4 +92,20 @@ img {
   padding-left: 10px;
   border-radius: 8px;
   object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
 }

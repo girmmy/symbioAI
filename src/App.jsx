@@ -84,13 +84,13 @@ function App() {
           ...prev,
           {
             role: "assistant",
-            content: "Sorry, I couldn't process your request.",
+            content:
+              "Sorry, I couldn't process your request. Please try again.",
           },
         ]);
       }
       console.error("Error running assistant:", error);
     } finally {
-      // ✅ Ensure loading stops
       if (!runMeta.cancelled) {
         setIsLoading(false);
       }
@@ -101,15 +101,19 @@ function App() {
   const handleSwitchAssistant = async (newAssistantId) => {
     // Cancel active run if any
     if (currentRunId && threadMap[selectedAssistant]) {
-      const threadId = threadMap[selectedAssistant];
-      await cancelRun(threadId, currentRunId);
-      if (window.currentRunMeta) window.currentRunMeta.cancelled = true;
+      try {
+        const threadId = threadMap[selectedAssistant];
+        await cancelRun(threadId, currentRunId);
+        if (window.currentRunMeta) window.currentRunMeta.cancelled = true;
+      } catch (error) {
+        console.error("Error cancelling run:", error);
+      }
     }
 
     // Reset UI state
     setSelectedAssistant(newAssistantId);
     setMessages([]);
-    setIsLoading(false); // ✅ hide typing indicator
+    setIsLoading(false);
     setCurrentRunId(null);
   };
 

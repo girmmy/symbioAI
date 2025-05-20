@@ -9,7 +9,7 @@
 }
 
 .assistantTitle {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   text-align: center;
   color: #fff;
@@ -83,7 +83,6 @@
   background: #121212;
 }
 
-
 .inputContainer {
   display: flex;
   align-items: center;
@@ -116,7 +115,7 @@
   min-height: 50px;
 }
 
-.css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input{
+.css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input {
   font-family: "Poppins", sans-serif !important;
 }
 
@@ -152,7 +151,6 @@
   margin-top: 16px;
 }
 
-
 .typingIndicator {
   display: flex;
   align-items: center;
@@ -173,7 +171,7 @@
 
 .dotFlashing::before,
 .dotFlashing::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 8px;
   height: 8px;
@@ -188,10 +186,16 @@
 }
 
 @keyframes dotFlashing {
-  0%, 100% { opacity: 0.1; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-3px); }
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
-
 
 .promptCard {
   transition: opacity 0.2s ease;
@@ -201,4 +205,11 @@
 .promptCard.processing {
   pointer-events: none;
   opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .chatWindow {
+    padding: 8px;
+    height: 100dvh;
+  }
 }

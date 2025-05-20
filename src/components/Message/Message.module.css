@@ -1,26 +1,31 @@
 /* Message.module.css */
 .messageContainer {
-    display: flex;
-    margin-bottom: 16px;
-  }
-  
-  .userMessage {
-    justify-content: flex-end;
-  }
-  
-  .assistantMessage {
-    justify-content: flex-start;
-  }
+  display: flex;
+  margin-bottom: 16px;
+}
 
-  .paragraph {
-    margin-bottom: 1em;
-    line-height: 1.6;
-  }
-  
-  .paragraph:last-child {
-    margin-bottom: 0;
-  }
-  
-  .boldText {
-    text-decoration: underline;
-  }
+.userMessage {
+  justify-content: flex-end;
+}
+
+.assistantMessage {
+  justify-content: flex-start;
+}
+
+.paragraph {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.boldText {
+  text-decoration: underline;
+}
+
+.messageContainer {
+  word-wrap: break-word;
+  max-width: 100%;
+}
