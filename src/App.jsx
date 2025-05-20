@@ -42,15 +42,16 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentRunId, setCurrentRunId] = useState(null);
+  const [threadsReady, setThreadsReady] = useState(false);
 
   useEffect(() => {
-    // Create a thread for each assistant when the app starts
     const initThreads = async () => {
       const map = {};
       for (const assistant of assistants) {
         map[assistant.id] = await createThread();
       }
       setThreadMap(map);
+      setThreadsReady(true); // ✅ mark ready
     };
     initThreads();
   }, []);
@@ -60,6 +61,11 @@ function App() {
     const threadId = threadMap[selectedAssistant];
     const runMeta = { cancelled: false };
     window.currentRunMeta = runMeta;
+
+    if (!threadsReady) {
+      console.warn("Threads not initialized yet.");
+      return;
+    }
 
     setMessages((prev) => [...prev, { role: "user", content: userInput }]);
 

@@ -3,27 +3,8 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_API_KEY,
-  dangerouslyAllowBrowser: true, // Needed for client-side usage
+  dangerouslyAllowBrowser: true, //  for client-side usage
 });
-
-export async function streamAssistantResponse(
-  threadId,
-  assistantId,
-  onMessage
-) {
-  const run = await openai.beta.threads.runs.create(threadId, {
-    assistant_id: assistantId,
-    stream: true, // Enable streaming
-  });
-
-  // Process the stream
-  for await (const event of run) {
-    if (event.event === "thread.message.delta") {
-      const content = event.data.delta.content?.[0]?.text?.value || "";
-      onMessage(content);
-    }
-  }
-}
 
 // Create a new thread for an assistant conversation
 export async function createThread() {
@@ -73,7 +54,7 @@ export async function runAssistant(threadId, assistantId) {
             throw new Error(`Run was ${runStatus.status}`);
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
         // Get the latest assistant message
@@ -82,9 +63,11 @@ export async function runAssistant(threadId, assistantId) {
           (msg) => msg.role === "assistant"
         );
 
-        return (
-          lastMessage?.content[0]?.text?.value || "No response from assistant."
-        );
+        const content = lastMessage?.content;
+        if (!content || content.length === 0)
+          return "No response from assistant.";
+        const text = content.find((c) => c.type === "text");
+        return text?.text?.value || "No text response from assistant.";
       })(),
     };
   } catch (error) {

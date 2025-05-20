@@ -81,11 +81,6 @@ function ChatWindow({
       setIsProcessing(false);
     }
 
-    if (setIsProcessing(false)) {
-      handleSwitchAssistant(newAssistantId);
-      isLoading(false);
-    }
-
     await handleSend(prompt.prompt);
     setIsProcessing(false);
   };
@@ -152,7 +147,7 @@ function ChatWindow({
         />
         <IconButton
           onClick={() => handleSend()}
-          disabled={isLoading}
+          disabled={isLoading || isProcessing}
           className={styles.sendButton}
           sx={{
             color: "#fff",
