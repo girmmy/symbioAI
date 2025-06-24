@@ -17,6 +17,9 @@ function ChatWindow({
   selectedAssistant,
   assistantName,
   handleSwitchAssistant,
+  threadsReady,
+  threadsError,
+  retryInitThreads,
 }) {
   const [userInput, setUserInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -89,17 +92,70 @@ function ChatWindow({
     <Box className={styles.chatWindow}>
       <div className={styles.assistantTitle}>{assistantName}</div>
 
-      {messages.length === 0 && !isLoading && (
+      {threadsError && (
+        <div
+          className={styles.typingIndicator}
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            color: "#ff5252",
+          }}
+        >
+          <span
+            style={{ fontWeight: 600, fontSize: "1.2rem", marginBottom: 8 }}
+          >
+            Failed to initialize assistants
+          </span>
+          <span style={{ marginBottom: 16 }}>
+            Please check your network connection or API key, then try again.
+          </span>
+          <button
+            onClick={retryInitThreads}
+            style={{
+              background: "#9c27b0",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "10px 24px",
+              fontWeight: 600,
+              fontSize: "1rem",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(156,39,176,0.15)",
+              marginTop: 8,
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!threadsReady && !threadsError && (
+        <div className={styles.typingIndicator}>
+          <div className={styles.dotFlashing}></div>
+          <span>Initializing assistants...</span>
+        </div>
+      )}
+
+      {messages.length === 0 && !isLoading && threadsReady && !threadsError && (
         <div className={styles.promptStarters}>
           <div className={styles.promptGrid}>
             {prompts.map((prompt, index) => (
               <div
                 key={index}
                 className={styles.promptCard}
-                onClick={() => !isProcessing && handlePromptClick(prompt)}
+                onClick={() =>
+                  !isProcessing &&
+                  threadsReady &&
+                  !threadsError &&
+                  handlePromptClick(prompt)
+                }
                 style={{
-                  pointerEvents: isProcessing ? "none" : "auto",
-                  opacity: isProcessing ? 0.7 : 1,
+                  pointerEvents:
+                    !threadsReady || isProcessing || threadsError
+                      ? "none"
+                      : "auto",
+                  opacity:
+                    !threadsReady || isProcessing || threadsError ? 0.7 : 1,
                 }}
               >
                 <div className={styles.promptIcon}>{prompt.icon}</div>
@@ -144,10 +200,11 @@ function ChatWindow({
               },
             },
           }}
+          disabled={!threadsReady || threadsError}
         />
         <IconButton
           onClick={() => handleSend()}
-          disabled={isLoading || isProcessing}
+          disabled={isLoading || isProcessing || !threadsReady || threadsError}
           className={styles.sendButton}
           sx={{
             color: "#fff",
@@ -172,6 +229,9 @@ ChatWindow.propTypes = {
   setSelectedAssistant: PropTypes.func.isRequired,
   assistantName: PropTypes.string.isRequired,
   handleSwitchAssistant: PropTypes.func.isRequired,
+  threadsReady: PropTypes.bool.isRequired,
+  threadsError: PropTypes.bool.isRequired,
+  retryInitThreads: PropTypes.func.isRequired,
 };
 
 export default ChatWindow;

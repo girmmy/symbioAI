@@ -43,16 +43,30 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentRunId, setCurrentRunId] = useState(null);
   const [threadsReady, setThreadsReady] = useState(false);
+  const [threadsError, setThreadsError] = useState(false);
+
+  const initThreads = async () => {
+    setThreadsReady(false);
+    setThreadsError(false);
+    try {
+      // Parallel thread creation
+      const threadPromises = assistants.map(() => createThread());
+      const threadIds = await Promise.all(threadPromises);
+      const map = {};
+      assistants.forEach((a, idx) => {
+        map[a.id] = threadIds[idx];
+      });
+      setThreadMap(map);
+      setThreadsReady(true);
+      setThreadsError(false);
+    } catch (err) {
+      setThreadsReady(false);
+      setThreadsError(true);
+      console.error("Failed to initialize threads", err);
+    }
+  };
 
   useEffect(() => {
-    const initThreads = async () => {
-      const map = {};
-      for (const assistant of assistants) {
-        map[assistant.id] = await createThread();
-      }
-      setThreadMap(map);
-      setThreadsReady(true); // ✅ mark ready
-    };
     initThreads();
   }, []);
 
@@ -176,6 +190,9 @@ function App() {
             selectedAssistant={selectedAssistant}
             setSelectedAssistant={setSelectedAssistant}
             handleSwitchAssistant={handleSwitchAssistant}
+            threadsReady={threadsReady}
+            threadsError={threadsError}
+            retryInitThreads={initThreads}
           />
         </Box>
       </Box>
