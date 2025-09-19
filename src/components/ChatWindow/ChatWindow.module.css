@@ -119,11 +119,6 @@
   font-family: "Poppins", sans-serif !important;
 }
 
-.textField:focus,
-.textField:not(:placeholder-shown) {
-  min-height: 50px;
-}
-
 .sendButton {
   background-color: #fff;
   background: #6c5ce7 !important; /* New purple shade */

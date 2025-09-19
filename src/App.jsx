@@ -71,15 +71,15 @@ function App() {
   }, []);
 
   const handleSubmit = async (userInput) => {
-    setIsLoading(true);
-    const threadId = threadMap[selectedAssistant];
-    const runMeta = { cancelled: false };
-    window.currentRunMeta = runMeta;
-
     if (!threadsReady) {
       console.warn("Threads not initialized yet.");
       return;
     }
+
+    setIsLoading(true);
+    const threadId = threadMap[selectedAssistant];
+    const runMeta = { cancelled: false };
+    window.currentRunMeta = runMeta;
 
     setMessages((prev) => [...prev, { role: "user", content: userInput }]);
 
